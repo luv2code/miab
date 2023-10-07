@@ -1,23 +1,12 @@
-**DEVELOPER INSTRUCTIONS:**
-
-- Update module name in go.mod
-- Update dependencies to latest versions
-- Update name and year in license
-- Customize configuration and Caddyfile parsing
-- Update godocs / comments (especially provider name and nuances)
-- Update README and remove this section
-
----
-
-\<PROVIDER\> module for Caddy
+[Mail-In-A-Box](https://mailinabox.email/) custom DNS API module for Caddy
 ===========================
 
-This package contains a DNS provider module for [Caddy](https://github.com/caddyserver/caddy). It can be used to manage DNS records with \<PROVIDER\>.
+This package contains a DNS provider module for [Caddy](https://github.com/caddyserver/caddy). It can be used to manage DNS records with [Mail-In-A-Box](https://mailinabox.email/).
 
-## Caddy module name
+## Caddy Mail-In-A-Box
 
 ```
-dns.providers.provider_name
+dns.providers.miab
 ```
 
 ## Config examples
@@ -30,8 +19,10 @@ To use this module for the ACME DNS challenge, [configure the ACME issuer in you
 	"challenges": {
 		"dns": {
 			"provider": {
-				"name": "provider_name",
-				"api_token": "YOUR_PROVIDER_API_TOKEN"
+				"name": "miab",
+				"api_url": "https://[your main-in-a-box domain name]/admin/dns/custom"
+                "email_address": "[admin account email address]"
+                "password": "[corresponding password]"
 			}
 		}
 	}
@@ -43,13 +34,21 @@ or with the Caddyfile:
 ```
 # globally
 {
-	acme_dns provider_name ...
+	acme_dns maib {
+        api_url https://[your main-in-a-box domain name]/admin/dns/custom
+        email_address [admin account email address]
+        password [corresponding password]
+    }
 }
 ```
 
 ```
 # one site
 tls {
-	dns provider_name ...
+	dns maib {
+        api_url https://[your main-in-a-box domain name]/admin/dns/custom
+        email_address [admin account email address]
+        password [corresponding password]
+    }
 }
 ```

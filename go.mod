@@ -1,4 +1,4 @@
-module github.com/caddy-dns/template
+module github.com/luv2code/miab
 
 go 1.21.0
 

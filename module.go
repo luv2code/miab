@@ -1,13 +1,13 @@
-package template
+package miab
 
 import (
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
-	miab "github.com/luv2code/libdns-miab"
+	libdnsmiab "github.com/luv2code/libdns-miab"
 )
 
 // Provider lets Caddy read and manipulate DNS records hosted by this DNS provider.
-type Provider struct{ *miab.Provider }
+type Provider struct{ *libdnsmiab.Provider }
 
 func init() {
 	caddy.RegisterModule(Provider{})
@@ -16,8 +16,8 @@ func init() {
 // CaddyModule returns the Caddy module information.
 func (Provider) CaddyModule() caddy.ModuleInfo {
 	return caddy.ModuleInfo{
-		ID:  "dns.providers.template",
-		New: func() caddy.Module { return &Provider{new(miab.Provider)} },
+		ID:  "dns.providers.miab",
+		New: func() caddy.Module { return &Provider{new(libdnsmiab.Provider)} },
 	}
 }
 
