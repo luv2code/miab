@@ -1,15 +1,13 @@
 package template
 
 import (
-	"fmt"
-
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
-	libdnstemplate "github.com/libdns/template"
+	miab "github.com/luv2code/libdns-miab"
 )
 
 // Provider lets Caddy read and manipulate DNS records hosted by this DNS provider.
-type Provider struct{ *libdnstemplate.Provider }
+type Provider struct{ *miab.Provider }
 
 func init() {
 	caddy.RegisterModule(Provider{})
@@ -19,42 +17,62 @@ func init() {
 func (Provider) CaddyModule() caddy.ModuleInfo {
 	return caddy.ModuleInfo{
 		ID:  "dns.providers.template",
-		New: func() caddy.Module { return &Provider{new(libdnstemplate.Provider)} },
+		New: func() caddy.Module { return &Provider{new(miab.Provider)} },
 	}
 }
 
-// TODO: This is just an example. Useful to allow env variable placeholders; update accordingly.
 // Provision sets up the module. Implements caddy.Provisioner.
 func (p *Provider) Provision(ctx caddy.Context) error {
-	p.Provider.APIToken = caddy.NewReplacer().ReplaceAll(p.Provider.APIToken, "")
-	return fmt.Errorf("TODO: not implemented")
+	p.Provider.APIURL = caddy.NewReplacer().ReplaceAll(p.Provider.APIURL, "")
+	p.Provider.EmailAddress = caddy.NewReplacer().ReplaceAll(p.Provider.EmailAddress, "")
+	p.Provider.Password = caddy.NewReplacer().ReplaceAll(p.Provider.Password, "")
+	return nil
 }
 
-// TODO: This is just an example. Update accordingly.
 // UnmarshalCaddyfile sets up the DNS provider from Caddyfile tokens. Syntax:
 //
-// providername [<api_token>] {
-//     api_token <api_token>
-// }
-//
-// **THIS IS JUST AN EXAMPLE AND NEEDS TO BE CUSTOMIZED.**
+//	miab {
+//	    api_url <api_url>
+//	    email_address <email_address>
+//	    password <password>
+//	}
 func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 	for d.Next() {
-		if d.NextArg() {
-			p.Provider.APIToken = d.Val()
-		}
 		if d.NextArg() {
 			return d.ArgErr()
 		}
 		for nesting := d.Nesting(); d.NextBlock(nesting); {
 			switch d.Val() {
-			case "api_token":
-				if p.Provider.APIToken != "" {
-					return d.Err("API token already set")
+			case "api_url":
+				if p.Provider.APIURL != "" {
+					return d.Err("API URL already set")
 				}
+				if !d.NextArg() {
+					return d.ArgErr()
+				}
+				p.Provider.APIURL = d.Val()
 				if d.NextArg() {
-					p.Provider.APIToken = d.Val()
+					return d.ArgErr()
 				}
+			case "email_address":
+				if p.Provider.EmailAddress != "" {
+					return d.Err("email address already set")
+				}
+				if !d.NextArg() {
+					return d.ArgErr()
+				}
+				p.Provider.EmailAddress = d.Val()
+				if d.NextArg() {
+					return d.ArgErr()
+				}
+			case "password":
+				if p.Provider.Password != "" {
+					return d.Err("password already set")
+				}
+				if !d.NextArg() {
+					return d.ArgErr()
+				}
+				p.Provider.Password = d.Val()
 				if d.NextArg() {
 					return d.ArgErr()
 				}
@@ -63,8 +81,14 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 			}
 		}
 	}
-	if p.Provider.APIToken == "" {
-		return d.Err("missing API token")
+	if p.Provider.APIURL == "" {
+		return d.Err("missing API URL")
+	}
+	if p.Provider.EmailAddress == "" {
+		return d.Err("missing email address")
+	}
+	if p.Provider.Password == "" {
+		return d.Err("missing password")
 	}
 	return nil
 }
