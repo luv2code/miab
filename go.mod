@@ -4,7 +4,7 @@ go 1.21.0
 
 require (
 	github.com/caddyserver/caddy/v2 v2.7.4
-	github.com/luv2code/libdns-miab v0.0.0-20231007014440-cf00f2333dce
+	github.com/luv2code/libdns-miab v0.0.1
 )
 
 require (
