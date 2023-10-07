@@ -21,8 +21,8 @@ To use this module for the ACME DNS challenge, [configure the ACME issuer in you
 			"provider": {
 				"name": "miab",
 				"api_url": "https://[your main-in-a-box domain name]/admin/dns/custom"
-                "email_address": "[admin account email address]"
-                "password": "[corresponding password]"
+                "email_address": "{$MAIB_EMAIL}"
+                "password": "{$MAIB_PASS}"
 			}
 		}
 	}
@@ -36,19 +36,26 @@ or with the Caddyfile:
 {
 	acme_dns maib {
         api_url https://[your main-in-a-box domain name]/admin/dns/custom
-        email_address [admin account email address]
-        password [corresponding password]
+        email_address {$MIAB_EMAIL}
+        password {$MIAB_PASS}
     }
 }
 ```
 
 ```
-# one site
-tls {
-	dns maib {
-        api_url https://[your main-in-a-box domain name]/admin/dns/custom
-        email_address [admin account email address]
-        password [corresponding password]
-    }
+# wild card
+*.box-domain.com {
+	tls {
+		dns miab {
+			api_url https://box.box-domain.com/admin/dns/custom
+			email_address {$MIAB_EMAIL}
+			password {$MIAB_PASS}
+		}
+	}
+
+	@subdomain host subdomain.schmoto.com
+	handle @subdomain {
+        response "Hello on subdomain"
+	}
 }
 ```
