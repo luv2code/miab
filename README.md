@@ -53,7 +53,7 @@ or with the Caddyfile:
 		}
 	}
 
-	@subdomain host subdomain.schmoto.com
+	@subdomain host subdomain.box-domain.com
 	handle @subdomain {
         response "Hello on subdomain"
 	}
